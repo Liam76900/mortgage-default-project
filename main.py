@@ -6,6 +6,7 @@ from age_data_cleaner import encode_age
 from missing_values_cleaner import clean_missing_values
 from income_to_loan_ratio import add_income_to_loan_ratio
 from categoricals_encoder import encode_categoricals
+from data_splitter import split_data
 
 loan_default_data = load_data('data/Loan_Default.csv')
 loan_default_data = encode_age(loan_default_data)
@@ -24,5 +25,12 @@ categorical_columns = [
 loan_default_data = loan_default_data.drop(columns=['age'])
 loan_default_data = encode_categoricals(loan_default_data, categorical_columns)
 
-print(loan_default_data.shape)
-print(loan_default_data.columns.tolist())
+X = loan_default_data.drop(columns=['Status', 'ID'])
+y = loan_default_data['Status']
+
+X_train, X_test, y_train, y_test = split_data(X, y)
+
+print(f"Training set size: {X_train.shape}")
+print(f"Test set size: {X_test.shape}")
+print(f"Training set default rate: {y_train.mean():.4f}")
+print(f"Test set default rate: {y_test.mean():.4f}")
