@@ -7,6 +7,7 @@ from missing_values_cleaner import clean_missing_values
 from income_to_loan_ratio import add_income_to_loan_ratio
 from categoricals_encoder import encode_categoricals
 from data_splitter import split_data
+from train_logistic_regression import train_logistic_regression
 
 loan_default_data = load_data('data/Loan_Default.csv')
 loan_default_data = encode_age(loan_default_data)
@@ -30,7 +31,7 @@ y = loan_default_data['Status']
 
 X_train, X_test, y_train, y_test = split_data(X, y)
 
-print(f"Training set size: {X_train.shape}")
-print(f"Test set size: {X_test.shape}")
-print(f"Training set default rate: {y_train.mean():.4f}")
-print(f"Test set default rate: {y_test.mean():.4f}")
+model = train_logistic_regression(X_train, y_train)
+
+print("Model trained successfully")
+print(f"Number of coefficients: {len(model.coef_[0])}")
