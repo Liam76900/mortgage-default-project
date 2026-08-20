@@ -12,6 +12,7 @@ from evaluate_model import evaluate_model
 from feature_scaler import scale_features
 from feature_importance_calculator import get_feature_importance
 from calibration_check import check_calibration
+from check_risk_deciles import check_risk_deciles
 
 loan_default_data = load_data('data/Loan_Default.csv')
 loan_default_data = encode_age(loan_default_data)
@@ -74,3 +75,12 @@ avg_pred_balanced, actual_balanced = check_calibration(model_balanced, X_test_sc
 
 print(f"\nBaseline — Average predicted probability: {avg_pred_baseline:.4f}, Actual rate: {actual_baseline:.4f}")
 print(f"Balanced — Average predicted probability: {avg_pred_balanced:.4f}, Actual rate: {actual_balanced:.4f}")
+
+decile_check_baseline = check_risk_deciles(model_baseline, X_test_scaled, y_test)
+decile_check_balanced = check_risk_deciles(model_balanced, X_test_scaled, y_test)
+
+print("Baseline model — actual default rate by predicted risk decile:")
+print(decile_check_baseline)
+
+print("\nBalanced model — actual default rate by predicted risk decile:")
+print(decile_check_balanced)
