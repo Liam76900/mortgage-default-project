@@ -13,6 +13,7 @@ from feature_scaler import scale_features
 from feature_importance_calculator import get_feature_importance
 from calibration_check import check_calibration
 from check_risk_deciles import check_risk_deciles
+from check_risk_by_ltv_band import check_risk_by_ltv_band
 
 loan_default_data = load_data('data/Loan_Default.csv')
 loan_default_data = encode_age(loan_default_data)
@@ -43,7 +44,7 @@ print(f"Test set default rate: {y_test.mean():.4f}")
 
 feature_names = X_train.columns.tolist()
 
-X_train_scaled, X_test_scaled = scale_features(X_train, X_test)
+X_train_scaled, X_test_scaled, scaler = scale_features(X_train, X_test)
 
 model_baseline = train_logistic_regression(X_train_scaled, y_train, class_weight=None)
 model_balanced = train_logistic_regression(X_train_scaled, y_train, class_weight="balanced")
@@ -84,3 +85,7 @@ print(decile_check_baseline)
 
 print("\nBalanced model — actual default rate by predicted risk decile:")
 print(decile_check_balanced)
+
+ltv_check_balanced = check_risk_by_ltv_band(model_balanced, X_test, scaler)
+print("\nBalanced model — average predicted probability by LTV band:")
+print(ltv_check_balanced)
