@@ -18,7 +18,7 @@ from check_risk_by_ltv_band import check_risk_by_ltv_band
 from decile_chart_plot import plot_decile_chart
 from ltv_band_chart_plot import plot_ltv_band_chart
 from roc_curve_plot import plot_roc_curve
-
+from feature_importance_plot import plot_feature_importance
 
 loan_default_data = load_data('data/Loan_Default.csv')
 loan_default_data = encode_age(loan_default_data)
@@ -99,3 +99,4 @@ plot_decile_chart(decile_check_baseline, decile_check_balanced)
 plot_ltv_band_chart(ltv_check_balanced)
 plot_roc_curve(model_baseline, X_test_scaled, y_test, model_name='Baseline')
 plot_roc_curve(model_balanced, X_test_scaled, y_test, model_name='Balanced')
+plot_feature_importance(importance_df)
