@@ -8,6 +8,8 @@ from income_to_loan_ratio import add_income_to_loan_ratio
 from categoricals_encoder import encode_categoricals
 from data_splitter import split_data
 from train_logistic_regression import train_logistic_regression
+from evaluate_model import evaluate_model
+from feature_scaler import scale_features
 
 loan_default_data = load_data('data/Loan_Default.csv')
 loan_default_data = encode_age(loan_default_data)
@@ -31,7 +33,22 @@ y = loan_default_data['Status']
 
 X_train, X_test, y_train, y_test = split_data(X, y)
 
-model = train_logistic_regression(X_train, y_train)
+X_train_scaled, X_test_scaled = scale_features(X_train, X_test)
+
+print(f"Training set size: {X_train.shape}")
+print(f"Test set size: {X_test.shape}")
+print(f"Training set default rate: {y_train.mean():.4f}")
+print(f"Test set default rate: {y_test.mean():.4f}")
+
+model = train_logistic_regression(X_train_scaled, y_train)
 
 print("Model trained successfully")
 print(f"Number of coefficients: {len(model.coef_[0])}")
+
+con_matrix, class_report, auc = evaluate_model(model, X_test_scaled, y_test)
+
+print("\nConfusion Matrix:")
+print(con_matrix)
+print("\nClassification Report:")
+print(class_report)
+print(f"\nAUC-ROC Score: {auc:.4f}")
