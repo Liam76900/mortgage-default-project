@@ -10,6 +10,7 @@ from data_splitter import split_data
 from train_logistic_regression import train_logistic_regression
 from evaluate_model import evaluate_model
 from feature_scaler import scale_features
+from feature_importance_calculator import get_feature_importance
 
 loan_default_data = load_data('data/Loan_Default.csv')
 loan_default_data = encode_age(loan_default_data)
@@ -33,22 +34,36 @@ y = loan_default_data['Status']
 
 X_train, X_test, y_train, y_test = split_data(X, y)
 
-X_train_scaled, X_test_scaled = scale_features(X_train, X_test)
-
 print(f"Training set size: {X_train.shape}")
 print(f"Test set size: {X_test.shape}")
 print(f"Training set default rate: {y_train.mean():.4f}")
 print(f"Test set default rate: {y_test.mean():.4f}")
 
-model = train_logistic_regression(X_train_scaled, y_train)
+feature_names = X_train.columns.tolist()
 
-print("Model trained successfully")
-print(f"Number of coefficients: {len(model.coef_[0])}")
+X_train_scaled, X_test_scaled = scale_features(X_train, X_test)
 
-con_matrix, class_report, auc = evaluate_model(model, X_test_scaled, y_test)
+model_baseline = train_logistic_regression(X_train_scaled, y_train, class_weight=None)
+model_balanced = train_logistic_regression(X_train_scaled, y_train, class_weight="balanced")
 
-print("\nConfusion Matrix:")
-print(con_matrix)
-print("\nClassification Report:")
-print(class_report)
-print(f"\nAUC-ROC Score: {auc:.4f}")
+con_matrix_baseline, class_report_baseline, auc_baseline = evaluate_model(model_baseline, X_test_scaled, y_test)
+con_matrix_balanced, class_report_balanced, auc_balanced = evaluate_model(model_balanced, X_test_scaled, y_test)
+
+
+print("\nBaseline Model")
+print(con_matrix_baseline)
+print(class_report_baseline)
+print(f"AUC: {auc_baseline:.4f}")
+
+print("\nBalanced Model")
+print(con_matrix_balanced)
+print(class_report_balanced)
+print(f"AUC: {auc_balanced:.4f}")
+
+importance_df = get_feature_importance(model_balanced, feature_names)
+
+print("\nTop 10 features increasing default risk:")
+print(importance_df.head(10))
+
+print("\nTop 10 features decreasing default risk:")
+print(importance_df.tail(10))
