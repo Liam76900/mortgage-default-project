@@ -11,6 +11,7 @@ from train_logistic_regression import train_logistic_regression
 from evaluate_model import evaluate_model
 from feature_scaler import scale_features
 from feature_importance_calculator import get_feature_importance
+from calibration_check import check_calibration
 
 loan_default_data = load_data('data/Loan_Default.csv')
 loan_default_data = encode_age(loan_default_data)
@@ -67,3 +68,9 @@ print(importance_df.head(10))
 
 print("\nTop 10 features decreasing default risk:")
 print(importance_df.tail(10))
+
+avg_pred_baseline, actual_baseline = check_calibration(model_baseline, X_test_scaled, y_test)
+avg_pred_balanced, actual_balanced = check_calibration(model_balanced, X_test_scaled, y_test)
+
+print(f"\nBaseline — Average predicted probability: {avg_pred_baseline:.4f}, Actual rate: {actual_baseline:.4f}")
+print(f"Balanced — Average predicted probability: {avg_pred_balanced:.4f}, Actual rate: {actual_balanced:.4f}")
