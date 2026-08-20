@@ -14,6 +14,10 @@ from feature_importance_calculator import get_feature_importance
 from calibration_check import check_calibration
 from check_risk_deciles import check_risk_deciles
 from check_risk_by_ltv_band import check_risk_by_ltv_band
+from decile_chart_plot import plot_decile_chart
+
+
+
 
 loan_default_data = load_data('data/Loan_Default.csv')
 loan_default_data = encode_age(loan_default_data)
@@ -89,3 +93,5 @@ print(decile_check_balanced)
 ltv_check_balanced = check_risk_by_ltv_band(model_balanced, X_test, scaler)
 print("\nBalanced model — average predicted probability by LTV band:")
 print(ltv_check_balanced)
+
+plot_decile_chart(decile_check_baseline, decile_check_balanced)
