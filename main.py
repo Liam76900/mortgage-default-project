@@ -1,6 +1,7 @@
 import sys
 sys.path.append('src')
 
+import pandas as pd
 from data_loader import load_data
 from age_data_cleaner import encode_age
 from missing_values_cleaner import clean_missing_values
@@ -15,7 +16,7 @@ from calibration_check import check_calibration
 from check_risk_deciles import check_risk_deciles
 from check_risk_by_ltv_band import check_risk_by_ltv_band
 from decile_chart_plot import plot_decile_chart
-
+from ltv_band_chart_plot import plot_ltv_band_chart
 
 
 
@@ -95,3 +96,6 @@ print("\nBalanced model — average predicted probability by LTV band:")
 print(ltv_check_balanced)
 
 plot_decile_chart(decile_check_baseline, decile_check_balanced)
+plot_ltv_band_chart(ltv_check_balanced)
+
+print(pd.cut(X_test['LTV'], bins=[0, 60, 80, 100, 120, 200]).value_counts())
